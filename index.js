@@ -1,13 +1,29 @@
-var express = require('express');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var http = require('http')
 
+var express = require('express');
+var socket = require('socket.io');
+
+var PORT = process.env.PORT || 3000;
+
+var app = express();
+var server = http.Server(app);
+var io = socket(server);
+
+// set up static files
 app.use(express.static(__dirname + '/public'));
 
+// basic route handler
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
+
+// state (maybe should store on client at least some of this)
+var state = {
+  allClients: [],
+  currentArtist: null,
+  currentWord: null,
+  isGuessing: false,
+}
 
 // store id's of connected clients
 var allClients = [];
@@ -39,5 +55,6 @@ io.sockets.on('connection', function(socket) {
 
 });
 
-http.listen(process.env.PORT || 3000);
-console.log('listening!');
+server.listen(PORT, function () {
+  console.log('listening on port ' + PORT);
+});
