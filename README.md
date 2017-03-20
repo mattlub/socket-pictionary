@@ -15,6 +15,7 @@ node index.js
 What to store:
 - current players
 - game state
+- game phase
 
 New player 'journey':
 - name entry
@@ -23,7 +24,7 @@ New player 'journey':
   - load chatroom
   - wait if in progress
 
-Game states:
+Game phase:
 - artist selection
 - pre-drawing
 - mid-drawing
@@ -34,3 +35,8 @@ Game states:
 - nicknames
 - pick a player every 30s
 - chatroom
+
+### TODO
+- testing: tape, frontend
+- modularise much more
+- get basic functionality
