@@ -5,6 +5,14 @@
   // initiate socket
   var socket = io();
 
+  // player selected event should start new game.
+  socket.addEventListener('player selected', (player) => {
+    var playerSpan = document.createElement('span');
+    playerSpan.textContent = `current player name: ${player.name}, id: ${player.id}`;
+    appContainer.appendChild(playerSpan)
+  })
+
+  // is this necessary?
   function getState (callback) {
     // send request
     var xhr = new XMLHttpRequest();
@@ -26,6 +34,7 @@
     console.log(state);
     renderChat(appContainer, socket, state);
     // render canvas on socket 'game' event or similar?
+
   }
 
   function renderChat (app, socket, state) {

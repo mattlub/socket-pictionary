@@ -32,7 +32,7 @@ var state = {
   isGuessing: false,
 }
 
-function selectPlayer (players) {
+function selectRandomPlayer (players) {
   if (players.length === 0) {
     // TODO: think about this
     return 'no players'
@@ -41,8 +41,9 @@ function selectPlayer (players) {
 }
 
 setInterval(function () {
-  console.log(selectPlayer(currPlayers));
-}, 3000)
+  // send player selected event to all sockets
+  io.sockets.emit('player selected', selectRandomPlayer(currPlayers));
+}, 30000)
 
 // store id's of connected clients
 var allClients = [];
