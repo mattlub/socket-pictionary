@@ -1,6 +1,6 @@
 var Render = (function () {
 
-  function renderNameInputScreen (app, socket, successCallback) {
+  function renderNameInputScreen (app, socket, callback) {
     // Name input logic
     var name;
     var nameInput = helpers.quickCreateElement('input', {
@@ -16,8 +16,11 @@ var Render = (function () {
         this.removeEventListener('keypress', nameInputListener);
         this.classList.add('hidden');
         data = {name: name, socket: socket};
-        console.log(socket.id);
-        successCallback();
+        socket.emit('name', {
+          name: name,
+          id: socket.id,
+        });
+        callback();
       }
     }
     nameInput.addEventListener('keypress',  nameInputListener);
