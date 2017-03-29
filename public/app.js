@@ -1,25 +1,56 @@
 (function () {
 
-  var app = document.getElementsByClassName('app')[0];
+  var appContainer = document.getElementsByClassName('app')[0];
 
   // initiate socket
   var socket = io();
 
-  // how to hide this?
-  // google hide client side javascript state variable
-  var state = {
-    artist: null,
-    word: null,
-    time: null
+  function getState (callback) {
+    // send request
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        callback(JSON.parse(xhr.responseText));
+      }
+      // TODO: other status code cases
+    }
+    xhr.open('GET', '/state');
+    xhr.send();
   }
 
-  // to be implemented
-  //state = loadState();
-
-  Render.renderNameInputScreen(app, socket, loadGame);
-
-  function loadGame () {
-    console.log('loading game')
+  function startGame () {
+    getState(renderGame)
   }
+
+  function renderGame (state) {
+    console.log(state);
+    renderChat(appContainer, socket, state);
+  }
+
+  function renderChat (app, socket, state) {
+    chatTitle = helpers.quickCreateElement('h4', {textContent: 'Live chat:'});
+    chatList = helpers.quickCreateElement('ul', {class: 'chat-list'});
+    chatInput = helpers.quickCreateElement('input');
+    chatInput.addEventListener('keypress', function(e) {
+      if (e.keyCode === 13 && this.value.length > 0) {
+        socket.emit('message', {
+          id: socket.id,
+          message: this.value.slice(0,40)
+        });
+        this.value = '';
+      }
+    });
+    app.appendChild(chatTitle);
+    app.appendChild(chatList);
+    app.appendChild(chatInput);
+
+    socket.addEventListener('message', (info) => {
+      chatList.appendChild(helpers.quickCreateElement('li', {
+        textContent: `${info.name}: ${info.message}`
+      }));
+    })
+  }
+
+  Render.renderNameInputScreen(appContainer, socket, startGame);
 
 })();
