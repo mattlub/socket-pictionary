@@ -31,9 +31,10 @@ Game phase:
 
 ### Most basic functionality
 
-- nicknames
-- pick a player every 30s
-- chatroom
+- require nickname
+- then chat loads immediately (and is permanent)
+- pick a player every 30s, and load canvas/game
+- so may have to wait up to 30s for a new game
 
 ### TODO
 - testing: tape, frontend
