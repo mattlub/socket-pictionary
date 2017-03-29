@@ -17,9 +17,14 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-// state (maybe should store on client at least some of this)
+app.get('/state', function(req, res) {
+    res.send(JSON.stringify(state));
+});
+
+// state
 var state = {
   allClients: [],
+  currPlayers: [],
   currentArtist: null,
   currentWord: null,
   isGuessing: false,
@@ -27,6 +32,7 @@ var state = {
 
 // store id's of connected clients
 var allClients = [];
+var currPlayers = [];
 
 // add logic for socket connection
 io.sockets.on('connection', function(socket) {
@@ -36,19 +42,41 @@ io.sockets.on('connection', function(socket) {
   // to use client id here
   allClients.push(id);
 
+  socket.on('message', function(info) {
+    // info is id, message
+    console.log('received message from ' + id);
+    // get name from currPlayers array
+    var name = currPlayers.filter(function (player) {
+      return player.id === id
+    })[0].name;
+    // emit message with name now.
+    io.emit('message', {
+      name: name,
+      id: info.id,
+      message: info.message
+    });
+  })
+
+  socket.on('name', function(info) {
+    // info is name and id
+    currPlayers.push(info);
+    console.log(currPlayers);
+  })
+
   // handle disconnect
   socket.on('disconnect', function() {
     console.log('disconnection! id=' + id);
+    // remove from all clients array
     var i = allClients.indexOf(id);
-    // remove from all clients list
     allClients.splice(i, 1);
+
+    // remove from currPlayers array
+    i = currPlayers.map(player => player.id).indexOf(id);
+    currPlayers.splice(i, 1);
+
     // send player disconnected event
     io.emit('player disconnected', {id: id});
   });
-
-  socket.on('message', function(info) {
-    io.emit('message', info);
-  })
 
   // to remember syntax
   io.emit('nothing', {});
