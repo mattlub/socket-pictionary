@@ -25,6 +25,7 @@
   function renderGame (state) {
     console.log(state);
     renderChat(appContainer, socket, state);
+    // render canvas on socket 'game' event or similar?
   }
 
   function renderChat (app, socket, state) {
