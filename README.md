@@ -4,10 +4,9 @@ An ambitious online pictionary app.
 
 Local installation instructions: (to be amended)
 ```
-git clone <url>
-cd <dir>
+git clone && cd
 npm install
-node index.js
+npm start
 ```
 
 ### Current notes, for full version
