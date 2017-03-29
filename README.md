@@ -39,3 +39,7 @@ Game phase:
 - testing: tape, frontend
 - modularise much more
 - get basic functionality
+
+### improvements?
+- error handling
+- render functions should be more uniform
