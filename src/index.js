@@ -1,5 +1,5 @@
-var http = require('http')
-
+var http = require('http');
+var path = require('path');
 var express = require('express');
 var socket = require('socket.io');
 
@@ -10,18 +10,20 @@ var server = http.Server(app);
 var io = socket(server);
 
 // set up static files
-app.use(express.static(__dirname + '/public'));
+var staticPath = path.join(__dirname, '../public');
+app.use(express.static(staticPath));
 
 // basic route handler
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/index.html');
+  var indexPath = path.join(__dirname, '../public/index.html');
+  res.sendFile(indexPath);
 });
 
 app.get('/state', function(req, res) {
-    res.send(JSON.stringify(state));
+  res.send(JSON.stringify(state));
 });
 
-// state
+// state, currently not really used
 var state = {
   allClients: [],
   currPlayers: [],
@@ -29,6 +31,18 @@ var state = {
   currentWord: null,
   isGuessing: false,
 }
+
+function selectPlayer (players) {
+  if (players.length === 0) {
+    // TODO: think about this
+    return 'no players'
+  }
+  return players[Math.floor(Math.random() * players.length)]
+}
+
+setInterval(function () {
+  console.log(selectPlayer(currPlayers));
+}, 3000)
 
 // store id's of connected clients
 var allClients = [];
@@ -38,10 +52,9 @@ var currPlayers = [];
 io.sockets.on('connection', function(socket) {
   var id = socket.client.id;
   console.log('connection!: id=' + id);
-  // could push whole socket instead, need to look into whether it's suitable
-  // to use client id here
   allClients.push(id);
 
+  // message
   socket.on('message', function(info) {
     // info is id, message
     console.log('received message from ' + id);
@@ -57,6 +70,7 @@ io.sockets.on('connection', function(socket) {
     });
   })
 
+  // successful name entry
   socket.on('name', function(info) {
     // info is name and id
     currPlayers.push(info);
