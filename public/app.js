@@ -7,31 +7,18 @@
 
   // player selected event should start new game.
   socket.addEventListener('player selected', (player) => {
-    var playerSpan = document.createElement('span');
-    playerSpan.textContent = `current player name: ${player.name}, id: ${player.id}`;
-    appContainer.appendChild(playerSpan)
+    console.log(`current player name: ${player.name}, id: ${player.id}`);
+    // start game
+    // render board
   })
 
   socket.addEventListener('word', word => {
     console.log(word);
+    // display word on screen
   });
 
-  // is this necessary?
-  function getState (callback) {
-    // send request
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        callback(JSON.parse(xhr.responseText));
-      }
-      // TODO: other status code cases
-    }
-    xhr.open('GET', '/state');
-    xhr.send();
-  }
-
   function startGame () {
-    getState(renderGame)
+    helpers.getState(renderGame);
   }
 
   function renderGame (state) {
