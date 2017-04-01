@@ -67,18 +67,26 @@ io.sockets.on('connection', function(socket) {
 
   // message
   socket.on('message', function(info) {
-    // info is id, message
+    // info is {id, message}
     console.log('received message from ' + id);
+
     // get name from currPlayers array
     var name = state.currPlayers.filter(function (player) {
       return player.id === id
     })[0].name;
+
     // emit message with name now.
     io.emit('message', {
       name: name,
       id: info.id,
-      message: info.message
+      message: info.message,
+      isCorrect: info.message === state.currentWord
     });
+
+    if (info.message === state.currentWord) {
+      console.log('word guessed');
+      io.emit('game over', {})
+    }
   })
 
   // successful name entry
