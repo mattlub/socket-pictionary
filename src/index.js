@@ -28,47 +28,49 @@ app.get('/state', function(req, res) {
 
 // state, currently not really used
 var state = {
+  // id's of connected clients
   allClients: [],
+  // currPlayers stores {name, id} (all clients which have entered a name)
   currPlayers: [],
-  currentArtist: null,
-  currentWord: null,
-  isGuessing: false,
-}
+  currentArtist: undefined,
+  currentWord: undefined
+};
 
-// interval to select player
-var interval = setInterval(function () {
-  // send player selected event to all sockets
-  var selectedPlayer = selectRandom(currPlayers);
+// TODO refactor so this doesn't access stuff outside its scope
+function selectPlayerAndWord () {
+  var selectedPlayer = selectRandom(state.currPlayers);
 
   if (selectedPlayer) {
     console.log('new player selected: ', selectedPlayer);
+    // send player selected event to all sockets
     io.sockets.emit('player selected', selectedPlayer);
 
     var randomWord = selectRandom(words);
     // emit to specific socket
     io.to(selectedPlayer.id).emit('word', randomWord);
+
+    state.currentArtist = selectedPlayer;
+    state.currentWord = randomWord;
   }
-}, 3000)
+}
 
-// store id's of connected clients
-var allClients = [];
+// interval to select player
+var interval = setInterval(selectPlayerAndWord , 3000)
 
-// currPlayers stores {name, id}
-var currPlayers = [];
 
 // add logic for socket connection
 io.sockets.on('connection', function(socket) {
   // socket.client.id or just socket.id
   var id = socket.id;
   console.log('new connection: id=' + id);
-  allClients.push(id);
+  state.allClients.push(id);
 
   // message
   socket.on('message', function(info) {
     // info is id, message
     console.log('received message from ' + id);
     // get name from currPlayers array
-    var name = currPlayers.filter(function (player) {
+    var name = state.currPlayers.filter(function (player) {
       return player.id === id
     })[0].name;
     // emit message with name now.
@@ -82,27 +84,24 @@ io.sockets.on('connection', function(socket) {
   // successful name entry
   socket.on('name', function(info) {
     // info is name and id
-    currPlayers.push(info);
-    console.log(currPlayers);
+    state.currPlayers.push(info);
+    console.log(state.currPlayers);
   })
 
   // handle disconnect
   socket.on('disconnect', function() {
     console.log('disconnection! id=' + id);
     // remove from all clients array
-    var i = allClients.indexOf(id);
-    allClients.splice(i, 1);
+    var i = state.allClients.indexOf(id);
+    state.allClients.splice(i, 1);
 
     // remove from currPlayers array
-    i = currPlayers.map(player => player.id).indexOf(id);
-    currPlayers.splice(i, 1);
+    i = state.currPlayers.map(player => player.id).indexOf(id);
+    state.currPlayers.splice(i, 1);
 
     // send player disconnected event
     io.emit('player disconnected', {id: id});
   });
-
-  // to remember syntax
-  io.emit('nothing', {});
 
 });
 
