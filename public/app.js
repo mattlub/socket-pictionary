@@ -12,6 +12,10 @@
     appContainer.appendChild(playerSpan)
   })
 
+  socket.addEventListener('word', word => {
+    console.log(word);
+  });
+
   // is this necessary?
   function getState (callback) {
     // send request

@@ -3,6 +3,9 @@ var path = require('path');
 var express = require('express');
 var socket = require('socket.io');
 
+var { selectRandom } = require('./helpers');
+var words = require('./words.js');
+
 var PORT = process.env.PORT || 3000;
 
 var app = express();
@@ -32,27 +35,32 @@ var state = {
   isGuessing: false,
 }
 
-function selectRandomPlayer (players) {
-  if (players.length === 0) {
-    // TODO: think about this
-    return 'no players'
-  }
-  return players[Math.floor(Math.random() * players.length)]
-}
-
-setInterval(function () {
+// interval to select player
+var interval = setInterval(function () {
   // send player selected event to all sockets
-  io.sockets.emit('player selected', selectRandomPlayer(currPlayers));
-}, 30000)
+  var selectedPlayer = selectRandom(currPlayers);
+
+  if (selectedPlayer) {
+    console.log('new player selected: ', selectedPlayer);
+    io.sockets.emit('player selected', selectedPlayer);
+
+    var randomWord = selectRandom(words);
+    // emit to specific socket
+    io.to(selectedPlayer.id).emit('word', randomWord);
+  }
+}, 3000)
 
 // store id's of connected clients
 var allClients = [];
+
+// currPlayers stores {name, id}
 var currPlayers = [];
 
 // add logic for socket connection
 io.sockets.on('connection', function(socket) {
-  var id = socket.client.id;
-  console.log('connection!: id=' + id);
+  // socket.client.id or just socket.id
+  var id = socket.id;
+  console.log('new connection: id=' + id);
   allClients.push(id);
 
   // message
