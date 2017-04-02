@@ -65,6 +65,13 @@ io.sockets.on('connection', function(socket) {
   console.log('new connection: id=' + id);
   state.allClients.push(id);
 
+  // successful name entry
+  socket.on('name', function(info) {
+    // info is name and id
+    state.currPlayers.push(info);
+    console.log(state.currPlayers);
+  })
+
   // message
   socket.on('message', function(info) {
     // info is {id, message}
@@ -89,12 +96,13 @@ io.sockets.on('connection', function(socket) {
     }
   })
 
-  // successful name entry
-  socket.on('name', function(info) {
-    // info is name and id
-    state.currPlayers.push(info);
-    console.log(state.currPlayers);
-  })
+  socket.on('draw', function(info) {
+    // info is {fromX, fromY, toX, toY}
+    if (state.currentArtist.id && id === state.currentArtist.id) {
+      console.log('draw emitted: ', info);
+      io.emit('draw', info);
+    }
+  });
 
   // handle disconnect
   socket.on('disconnect', function() {
