@@ -41,6 +41,15 @@ Game phase:
 - modularise much more
 - get basic functionality
 
+Clear up render logic:
+- render game screen first
+  - with chat
+  - and status bar e.g.
+    - hi player1! You're the artist. Word is 'ball'
+    - hi jon! You're guessing. The word is _ _ _ _
+- render new canvas each time game starts, or just blank the canvas
+
+
 ### improvements?
 - error handling
 - render functions should be more uniform
