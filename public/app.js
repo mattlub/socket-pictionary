@@ -2,6 +2,13 @@
 
   var appContainer = document.getElementsByClassName('app')[0];
 
+  var clientState = {
+    isArtist: false,
+    isDrawing: false,
+    lastX: null,
+    lastY: null
+  };
+
   // initiate socket
   var socket = io();
 
@@ -14,6 +21,7 @@
 
   socket.addEventListener('word', word => {
     console.log(word);
+    clientState.isArtist = true;
     // display word on screen
   });
 
@@ -26,7 +34,7 @@
     console.log(state);
     Render.renderChat(appContainer, socket, state);
     // render canvas on socket 'game' event or similar?
-    Render.renderCanvas(appContainer, socket, state);
+    Render.renderCanvas(appContainer, socket, state, clientState);
   }
 
   Render.renderNameInputScreen(appContainer, socket, startGame);
