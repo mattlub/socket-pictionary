@@ -96,10 +96,10 @@ io.sockets.on('connection', function(socket) {
     }
   })
 
+  // info is {fromX, fromY, toX, toY}
   socket.on('draw', function(info) {
-    // info is {fromX, fromY, toX, toY}
+    // only emit if it comes from current artist
     if (state.currentArtist.id && id === state.currentArtist.id) {
-      console.log('draw emitted: ', info);
       io.emit('draw', info);
     }
   });
