@@ -28,9 +28,9 @@ var Render = (function () {
   }
 
   function renderChat (app, socket, state) {
-    chatTitle = helpers.quickCreateElement('h4', {textContent: 'Live chat:'});
-    chatList = helpers.quickCreateElement('ul', {class: 'chat-list'});
-    chatInput = helpers.quickCreateElement('input');
+    var chatTitle = helpers.quickCreateElement('h4', {textContent: 'Live chat:'});
+    var chatList = helpers.quickCreateElement('ul', {class: 'chat-list'});
+    var chatInput = helpers.quickCreateElement('input');
     chatInput.addEventListener('keypress', function(e) {
       if (e.keyCode === 13 && this.value.length > 0) {
         socket.emit('message', {
@@ -51,9 +51,71 @@ var Render = (function () {
     })
   }
 
+  function renderCanvas (app, socket, state, cState) {
+    var canvas = helpers.quickCreateElement('canvas', {
+      width: '200px',
+      height: '200px',
+      style: 'border: 1px solid black'
+    });
+    var ctx = canvas.getContext("2d");
+    // canvas.width = window.innerWidth * 0.9;
+    // canvas.height = window.innerHeight * 0.7;
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 10;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+
+    function draw (e) {
+      if (!cState.isDrawing) {
+        return
+      }
+      var info = {
+        fromX: cState.lastX,
+        fromY: cState.lastY,
+        toX: e.offsetX,
+        toY: e.offsetY
+      }
+      socket.emit('draw', info);
+      // ctx.beginPath();
+      // ctx.moveTo(cState.lastX, cState.lastY);
+      // ctx.lineTo(e.offsetX, e.offsetY);
+      // ctx.stroke();
+      cState.lastX = e.offsetX;
+      cState.lastY = e.offsetY;
+      console.log(cState);
+    };
+
+    function stopDrawing () {
+      cState.isDrawing = false;
+      canvas.classList.remove("drawing");
+    };
+
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mousedown", function (e) {
+      cState.lastX = e.offsetX;
+      cState.lastY = e.offsetY;
+      cState.isDrawing = true;
+      canvas.classList.add("drawing");
+    });
+    canvas.addEventListener("mouseup", stopDrawing);
+    // change this so mousein resumes drawing
+    canvas.addEventListener("mouseout", stopDrawing);
+
+    socket.addEventListener('draw', function(info) {
+      console.log('draw received: ', info);
+      ctx.beginPath();
+      ctx.moveTo(info.fromX, info.fromY);
+      ctx.lineTo(info.toX, info.toY);
+      ctx.stroke();
+    });
+
+    app.appendChild(canvas);
+  }
+
   return {
     renderNameInputScreen: renderNameInputScreen,
-    renderChat: renderChat
+    renderChat: renderChat,
+    renderCanvas: renderCanvas
   }
 
 })();
