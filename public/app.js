@@ -1,4 +1,4 @@
-(function () {
+var pictionary = (function () {
 
   var appContainer = document.getElementsByClassName('app')[0];
 
@@ -13,13 +13,17 @@
   var socket = io();
 
   // player selected event should start new game.
-  socket.addEventListener('player selected', (player) => {
-    console.log(`current player name: ${player.name}, id: ${player.id}`);
+  socket.addEventListener('player selected', function (player) {
+    console.log(`selected artist: ${player.name}, id: ${player.id}`);
+    // set isArtist to false to prevent draw events being fired
+    if (player.id !== socket.id) {
+      clientState.isArtist = false;
+    }
     // start game
     // render board
   })
 
-  socket.addEventListener('word', word => {
+  socket.addEventListener('word', function (word) {
     console.log(word);
     clientState.isArtist = true;
     // display word on screen
