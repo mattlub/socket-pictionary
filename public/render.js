@@ -66,7 +66,7 @@ var Render = (function () {
     ctx.lineCap = "round";
 
     function draw (e) {
-      if (!cState.isDrawing) {
+      if (!cState.isDrawing || !cState.isArtist) {
         return
       }
       var info = {
@@ -82,7 +82,6 @@ var Render = (function () {
       // ctx.stroke();
       cState.lastX = e.offsetX;
       cState.lastY = e.offsetY;
-      console.log(cState);
     };
 
     function stopDrawing () {
@@ -102,7 +101,6 @@ var Render = (function () {
     canvas.addEventListener("mouseout", stopDrawing);
 
     socket.addEventListener('draw', function(info) {
-      console.log('draw received: ', info);
       ctx.beginPath();
       ctx.moveTo(info.fromX, info.fromY);
       ctx.lineTo(info.toX, info.toY);
