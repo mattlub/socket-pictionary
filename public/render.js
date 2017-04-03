@@ -27,7 +27,23 @@ var Render = (function () {
     app.appendChild(nameInput);
   }
 
-  function renderChat (app, socket, state) {
+  function renderStatusBar (app, socket) {
+    var statusBar = helpers.quickCreateElement('div', {
+      class: 'statusBar'
+    });
+    var messageSpan = helpers.quickCreateElement('span', {
+      class: 'message',
+      textContent: 'Welcome to the game!'
+    });
+    // var wordSpan = helpers.quickCreateElement('span', {
+    //   class: 'word'
+    // });
+    statusBar.appendChild(messageSpan);
+    // statusBar.appendChild(wordSpan);
+    app.appendChild(statusBar);
+  }
+
+  function renderChat (app, socket) {
     var chatTitle = helpers.quickCreateElement('h4', {textContent: 'Live chat:'});
     var chatList = helpers.quickCreateElement('ul', {class: 'chat-list'});
     var chatInput = helpers.quickCreateElement('input');
@@ -51,7 +67,7 @@ var Render = (function () {
     })
   }
 
-  function renderCanvas (app, socket, state, cState) {
+  function renderCanvas (app, socket, cState) {
     var canvas = helpers.quickCreateElement('canvas', {
       width: '200px',
       height: '200px',
@@ -112,6 +128,7 @@ var Render = (function () {
 
   return {
     renderNameInputScreen: renderNameInputScreen,
+    renderStatusBar: renderStatusBar,
     renderChat: renderChat,
     renderCanvas: renderCanvas
   }
