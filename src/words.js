@@ -8,5 +8,15 @@ module.exports = [
   'garage',
   'hijab',
   'ink',
-  'joust'
+  'joust',
+  'kkk',
+  'liwan',
+  'moon',
+  'nap',
+  'opera',
+  'partner',
+  'queen',
+  'run',
+  'smile',
+  'tree'
 ];
