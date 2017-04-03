@@ -91,6 +91,11 @@ io.sockets.on('connection', function(socket) {
 
     if (info.message === state.currentWord) {
       console.log('word guessed');
+      if (interval) {
+        clearInterval(interval);
+        selectPlayerAndWord();
+        interval = setInterval(selectPlayerAndWord , 10000)
+      }
       io.emit('game over', {})
     }
   })
