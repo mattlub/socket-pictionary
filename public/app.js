@@ -14,31 +14,46 @@ var pictionary = (function () {
 
   // player selected event should start new game.
   socket.addEventListener('player selected', function (player) {
-    console.log(`selected artist: ${player.name}, id: ${player.id}`);
     // set isArtist to false to prevent draw events being fired
     if (player.id !== socket.id) {
       clientState.isArtist = false;
     }
-    // start game
-    // render board
+    // restart game
+    if (document.querySelector('.message')) {
+      document.querySelector('.message').innerHTML = 'The artist is ' + player.name + '! You are guessing!';
+    }
+    if (document.querySelector('canvas')) {
+      var canvas = document.querySelector('canvas');
+      var ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
   })
 
   socket.addEventListener('word', function (word) {
     console.log(word);
     clientState.isArtist = true;
     // display word on screen
+    if (document.querySelector('.message')) {
+      document.querySelector('.message').innerHTML = 'You are the artist! Draw ' + word + '!';
+    }
   });
 
-  function startGame () {
-    // don't really want to do this.
-    helpers.getState(renderGame);
-  }
+  // function renderGameScreen () {
+  //   // render all the stuff
+  //   startGame()
+  // }
 
-  function renderGame (state) {
-    console.log(state);
-    Render.renderChat(appContainer, socket, state);
+  function startGame () {
+    // render game screen first
+    //   - with chat
+    //   - and status bar e.g.
+    //     - hi player1! You're the artist. Word is 'ball'
+    //     - hi jon! You're guessing. The word is _ _ _ _
+    // - render new canvas each time game starts, or just blank the canvas
+    Render.renderStatusBar(appContainer, socket);
+    Render.renderChat(appContainer, socket);
     // render canvas on socket 'game' event or similar?
-    Render.renderCanvas(appContainer, socket, state, clientState);
+    Render.renderCanvas(appContainer, socket, clientState);
   }
 
   Render.renderNameInputScreen(appContainer, socket, startGame);
