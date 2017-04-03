@@ -55,8 +55,7 @@ function selectPlayerAndWord () {
 }
 
 // interval to select player
-var interval = setInterval(selectPlayerAndWord , 3000)
-
+var interval = setInterval(selectPlayerAndWord , 10000)
 
 // add logic for socket connection
 io.sockets.on('connection', function(socket) {
