@@ -25,9 +25,9 @@ New player 'journey':
 
 Game phase:
 - artist selection
-- pre-drawing
+- pre-drawing (is this needed?)
 - mid-drawing
-- post-drawing
+- post-drawing (announcement of result)
 
 ### Most basic functionality
 

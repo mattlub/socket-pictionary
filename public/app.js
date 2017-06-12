@@ -12,6 +12,8 @@ var pictionary = (function () {
   // initiate socket
   var socket = io();
 
+
+
   // player selected event should start new game.
   socket.addEventListener('player selected', function (player) {
     // set isArtist to false to prevent draw events being fired
@@ -35,6 +37,17 @@ var pictionary = (function () {
     // display word on screen
     if (document.querySelector('.message')) {
       document.querySelector('.message').innerHTML = 'You are the artist! Draw ' + word + '!';
+    }
+  });
+
+  socket.addEventListener('game over', function (data) {
+    // data is of the form { word, winner: (name or null)}
+    var message = 'Game over! The word was ' + data.word + ', '
+    message += data.winner
+      ? data.winner + ' wins!'
+      : 'no one wins!'
+    if (document.querySelector('.message')) {
+      document.querySelector('.message').innerHTML = message
     }
   });
 

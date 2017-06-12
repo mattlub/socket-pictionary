@@ -12,6 +12,22 @@ var app = express();
 var server = http.Server(app);
 var io = socket(server);
 
+const GAME_LENGTH = 30000
+const GAMEOVER_LENGTH = 3000
+
+// current socket messages received:
+// connection
+// message
+// draw
+// disconnect
+
+// current socket messages emitted:
+// player selected
+// word (to specific player)
+// message
+// draw
+// player disconnected
+
 // set up static files
 var staticPath = path.join(__dirname, '../public');
 app.use(express.static(staticPath));
@@ -25,6 +41,8 @@ var state = {
   currentArtist: undefined,
   currentWord: undefined
 };
+
+var gameOverTimeout
 
 // TODO refactor so this doesn't access stuff outside its scope
 function selectPlayerAndWord () {
@@ -41,11 +59,24 @@ function selectPlayerAndWord () {
 
     state.currentArtist = selectedPlayer;
     state.currentWord = randomWord;
+
+    // timeout to end game if no winner
+    gameOverTimeout = setTimeout(() => {
+      gameOver(state, null)
+      setTimeout(selectPlayerAndWord, GAMEOVER_LENGTH)
+    }, GAME_LENGTH)
+  }
+  else {
+    // TODO
   }
 }
 
-// interval to select player
-var interval = setInterval(selectPlayerAndWord , 10000)
+function gameOver (state, name) {
+  io.sockets.emit('game over', {
+    word: state.currentWord,
+    winner: name
+  })
+}
 
 // add logic for socket connection
 io.sockets.on('connection', function(socket) {
@@ -59,6 +90,9 @@ io.sockets.on('connection', function(socket) {
     // info is name and id
     state.currPlayers.push(info);
     console.log(state.currPlayers);
+    if (state.currPlayers.length === 1) {
+      selectPlayerAndWord()
+    }
   })
 
   // message
@@ -81,12 +115,9 @@ io.sockets.on('connection', function(socket) {
 
     if (info.message === state.currentWord) {
       console.log('word guessed');
-      if (interval) {
-        clearInterval(interval);
-        selectPlayerAndWord();
-        interval = setInterval(selectPlayerAndWord , 10000)
-      }
-      io.emit('game over', {})
+      clearTimeout(gameOverTimeout)
+      gameOver(state, name)
+      setTimeout(selectPlayerAndWord, GAMEOVER_LENGTH)
     }
   })
 
