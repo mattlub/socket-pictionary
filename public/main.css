@@ -1,3 +1,101 @@
-.hidden {
+/*
+GENERAL
+*/
+
+html, body {
+  margin: 0;
+  font-family: Helvetica;
+}
+
+.app-title {
+  text-align: center;
+}
+
+.app-container {
+  padding: 3em;
+}
+
+.app {
+  margin: 3em;
+  height: 500px;
+  max-width: 700px;
+  margin: auto;
+  position: relative;
+}
+
+
+/*
+NAME INPUT SCREEN
+*/
+
+.name-input.hidden {
   display: none;
+}
+
+.name-input {
+  display: block;
+  margin: auto;
+  text-align: center;
+  padding: 1em;
+  border-radius: 0.5em;
+  border: 1px solid black;
+}
+
+/*
+MAIN SCREEN
+*/
+
+.status-bar {
+  background: #99f;
+  padding: 1em;
+}
+
+.message {
+
+}
+
+.chat-section {
+  position: absolute;
+  left: 0;
+  width: 300px;
+  height: 400px;
+}
+
+.chat-list {
+  height: 300px;
+  overflow-y: scroll;
+  list-style: none;
+  width: 100%;
+  padding: 0;
+}
+
+.chat-list li{
+  padding: 0.2em;
+  width: 100%;
+}
+
+.correct {
+  color: green;
+}
+
+.chat-list li:nth-child(odd) {
+  background: #eee;
+}
+
+.chat-input {
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 1em;
+  border: 1px solid black;
+}
+
+canvas {
+  position: absolute;
+  height: 400px;
+  width: 400px;
+  right: 0px;
+  box-sizing: border-box;
+  border: 1px solid grey;
 }

@@ -105,15 +105,20 @@ io.sockets.on('connection', function(socket) {
       return player.id === id
     })[0].name;
 
-    // emit message with name now.
-    io.emit('message', {
-      name: name,
-      id: info.id,
-      message: info.message,
-      isCorrect: info.message === state.currentWord
-    });
+    console.log(state.currentArtist);
 
-    if (info.message === state.currentWord) {
+    if (!(info.message === state.currentWord && state.currentArtist && info.id === state.currentArtist.id)) {
+      // emit message with name now, unless it's the correct word and by the artist
+      io.emit('message', {
+        name: name,
+        id: info.id,
+        message: info.message,
+        isCorrect: info.message === state.currentWord
+      });
+
+    }
+
+    if (info.message === state.currentWord && state.currentArtist && info.id !== state.currentArtist.id ) {
       console.log('word guessed');
       clearTimeout(gameOverTimeout)
       gameOver(state, name)

@@ -29,24 +29,22 @@ var Render = (function () {
 
   function renderStatusBar (app, socket) {
     var statusBar = helpers.quickCreateElement('div', {
-      class: 'statusBar'
+      class: 'status-bar'
     });
     var messageSpan = helpers.quickCreateElement('span', {
       class: 'message',
       textContent: 'Welcome to the game!'
     });
-    // var wordSpan = helpers.quickCreateElement('span', {
-    //   class: 'word'
-    // });
     statusBar.appendChild(messageSpan);
     // statusBar.appendChild(wordSpan);
     app.appendChild(statusBar);
   }
 
   function renderChat (app, socket) {
+    var chatSection = helpers.quickCreateElement('div', {class: 'chat-section'})
     var chatTitle = helpers.quickCreateElement('h4', {textContent: 'Live chat:'});
     var chatList = helpers.quickCreateElement('ul', {class: 'chat-list'});
-    var chatInput = helpers.quickCreateElement('input');
+    var chatInput = helpers.quickCreateElement('input', {class: 'chat-input'});
     chatInput.addEventListener('keypress', function(e) {
       if (e.keyCode === 13 && this.value.length > 0) {
         socket.emit('message', {
@@ -56,28 +54,29 @@ var Render = (function () {
         this.value = '';
       }
     });
-    app.appendChild(chatTitle);
-    app.appendChild(chatList);
-    app.appendChild(chatInput);
+    chatSection.appendChild(chatTitle);
+    chatSection.appendChild(chatList);
+    chatSection.appendChild(chatInput);
+    app.appendChild(chatSection)
 
     socket.addEventListener('message', (info) => {
       chatList.appendChild(helpers.quickCreateElement('li', {
-        textContent: `${info.name}: ${info.message}`
+        textContent: `${info.name}: ${info.message}`,
+        class: info.isCorrect ? 'correct' : 'not-correct'
       }));
     })
   }
 
   function renderCanvas (app, socket, cState) {
     var canvas = helpers.quickCreateElement('canvas', {
-      width: '200px',
-      height: '200px',
-      style: 'border: 1px solid black'
+      width: '400px',
+      height: '400px'
     });
     var ctx = canvas.getContext("2d");
     // canvas.width = window.innerWidth * 0.9;
     // canvas.height = window.innerHeight * 0.7;
     ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 10;
+    ctx.lineWidth = 5;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
 
