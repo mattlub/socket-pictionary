@@ -1,13 +1,16 @@
 # Online Pictionary Game
 
-An ambitious online pictionary app.
+An online pictionary app I made. [Play now!](https://socket-pictionary.herokuapp.com/)
 
-Local installation instructions: (to be amended)
+Local installation instructions:
 ```
-git clone && cd
+git clone https://github.com/mattlub/socket-pictionary.git && cd socket-pictionary
 npm install
 npm start
 ```
+
+### Current status
+- it works
 
 ### Current notes, for full version
 
@@ -21,7 +24,7 @@ New player 'journey':
 - add to players list
 - load game
   - load chatroom
-  - wait if in progress
+  - straight into game
 
 Game phase:
 - artist selection
@@ -29,26 +32,11 @@ Game phase:
 - mid-drawing
 - post-drawing (announcement of result)
 
-### Most basic functionality
-
-- require nickname
-- then chat loads immediately (and is permanent)
-- pick a player every 30s, and load canvas/game
-- so may have to wait up to 30s for a new game
-
 ### TODO
 - testing: tape, frontend
+- style
 - modularise much more
-- get basic functionality
-
-Clear up render logic:
-- render game screen first
-  - with chat
-  - and status bar e.g.
-    - hi player1! You're the artist. Word is 'ball'
-    - hi jon! You're guessing. The word is _ _ _ _
-- render new canvas each time game starts, or just blank the canvas
-
+- add list of current players
 
 ### improvements?
 - error handling
