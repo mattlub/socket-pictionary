@@ -16,16 +16,6 @@ var io = socket(server);
 var staticPath = path.join(__dirname, '../public');
 app.use(express.static(staticPath));
 
-// basic route handler
-app.get('/', function(req, res) {
-  var indexPath = path.join(__dirname, '../public/index.html');
-  res.sendFile(indexPath);
-});
-
-app.get('/state', function(req, res) {
-  res.send(JSON.stringify(state));
-});
-
 // state, currently not really used
 var state = {
   // id's of connected clients
